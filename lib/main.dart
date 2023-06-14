@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'colors.dart' as colors;
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
       title: 'Nao Controller',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0x000081AF)
+          seedColor: colors.seed
         ),
         useMaterial3: true,
       ),
