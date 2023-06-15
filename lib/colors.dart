@@ -1,10 +1,10 @@
 
 import 'package:flutter/material.dart';
 
-const Color seed = Color(0x000081AF);
+const Color seed = Color.fromARGB(255, 0, 128, 175);
 
-const Color red = Color(0x00E74C3C);
-const Color lightBlue = Color(0x0085C1E9);
-const Color green = Color(0x0058D68D);
-const Color yellow = Color(0x00F7DC6F);
-const Color dark = Color(0x00292929);
+const Color red = Color.fromARGB(255, 231, 77, 60);
+const Color lightBlue = Color.fromARGB(255, 133, 193, 233);
+const Color green = Color.fromARGB(255, 88, 214, 140);
+const Color yellow = Color.fromARGB(255, 247, 220, 111);
+const Color dark = Color.fromARGB(255, 41, 41, 41);
