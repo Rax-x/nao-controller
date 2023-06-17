@@ -12,13 +12,15 @@ class NaoActionsRepositoryImpl implements NaoActionsRepository {
   final NaoService _service;
   final _errorMessage = "An Error occurred! Check your internet connection!";
 
+  final _okStatusCode = 200;
+
   NaoActionsRepositoryImpl(this._service);
 
   @override
   Future<Resource> getBatteryInfo() async {
     final response = await _service.getBatteryInfo();
 
-    if(response.statusCode != 200 || response.contentLength == 0){
+    if(response.statusCode != _okStatusCode || response.contentLength == 0){
       return Resource.error(
         _errorMessage,
         response.statusCode
@@ -35,7 +37,7 @@ class NaoActionsRepositoryImpl implements NaoActionsRepository {
     final response = await _service
       .changeLedColor(NaoChangeLedColorEventType.off);
 
-    return response.statusCode != 200
+    return response.statusCode != _okStatusCode
       ? Resource.error(_errorMessage, response.statusCode) 
       : Resource.success();
   }
@@ -45,7 +47,7 @@ class NaoActionsRepositoryImpl implements NaoActionsRepository {
     final response = await _service
       .changeLedColor(NaoChangeLedColorEventType.on);
 
-    return response.statusCode != 200
+    return response.statusCode != _okStatusCode
       ? Resource.error(_errorMessage, response.statusCode) 
       : Resource.success();
   }
@@ -55,7 +57,7 @@ class NaoActionsRepositoryImpl implements NaoActionsRepository {
     final response = await _service
       .changeLedColor(NaoChangeLedColorEventType.randomEyes);
 
-    return response.statusCode != 200
+    return response.statusCode != _okStatusCode
       ? Resource.error(_errorMessage, response.statusCode) 
       : Resource.success();
   }
@@ -65,7 +67,7 @@ class NaoActionsRepositoryImpl implements NaoActionsRepository {
     final response = await _service
       .changeLedColor(NaoChangeLedColorEventType.rasta);
 
-    return response.statusCode != 200
+    return response.statusCode != _okStatusCode
       ? Resource.error(_errorMessage, response.statusCode) 
       : Resource.success();
   }
@@ -75,7 +77,7 @@ class NaoActionsRepositoryImpl implements NaoActionsRepository {
     final response = await _service
       .changeLedColor(NaoChangeLedColorEventType.reset);
 
-    return response.statusCode != 200
+    return response.statusCode != _okStatusCode
       ? Resource.error(_errorMessage, response.statusCode) 
       : Resource.success();
   }
@@ -84,7 +86,7 @@ class NaoActionsRepositoryImpl implements NaoActionsRepository {
   Future<Resource> talk(String message) async {
     final response = await _service.speechText(message);
 
-    return response.statusCode != 200
+    return response.statusCode != _okStatusCode
       ? Resource.error(_errorMessage, response.statusCode) 
       : Resource.success();
   }
@@ -93,7 +95,7 @@ class NaoActionsRepositoryImpl implements NaoActionsRepository {
   Future<Resource> walk(Map<String, double> coordinates) async {
     final response = await _service.walk(coordinates);
 
-    return response.statusCode != 200
+    return response.statusCode != _okStatusCode
       ? Resource.error(_errorMessage, response.statusCode) 
       : Resource.success();
   }
@@ -102,7 +104,7 @@ class NaoActionsRepositoryImpl implements NaoActionsRepository {
   Future<Resource> closeServer() async {
     final response = await _service.closeServer();
 
-    return response.statusCode != 200
+    return response.statusCode != _okStatusCode
       ? Resource.error(_errorMessage, response.statusCode) 
       : Resource.success();
   }
