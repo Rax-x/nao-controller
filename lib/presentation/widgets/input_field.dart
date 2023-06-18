@@ -2,22 +2,19 @@ import 'package:flutter/material.dart';
 
 import 'package:nao_controller/colors.dart' as colors;
 
-class InputField extends StatefulWidget {
-  
-  final TextEditingController editingController;
+class InputField extends StatelessWidget {
+
   final String label;
-  
+  final TextEditingController editingController;
+  final TextInputType type;
+
   const InputField({
     super.key,
     required this.label,
-    required this.editingController
+    required this.editingController,
+    this.type = TextInputType.text
   });
 
-  @override
-  State<InputField> createState() => _InputFieldState();
-}
-
-class _InputFieldState extends State<InputField> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -28,12 +25,13 @@ class _InputFieldState extends State<InputField> {
           )
       ),
       child: TextField(
-        controller: widget.editingController,
+        keyboardType: type,
+        controller: editingController,
         decoration: InputDecoration(
-          hintText: widget.label,
+          hintText: label,
           border: const OutlineInputBorder(
             borderSide: BorderSide(
-              color: colors.seed
+              color: colors.primary
             ),
             borderRadius: BorderRadius.all(
               Radius.circular(40)

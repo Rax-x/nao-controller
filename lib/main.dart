@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nao_controller/presentation/screens/connect_screen.dart';
 
 import 'colors.dart' as colors;
 
@@ -19,13 +18,25 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Nao Controller',
+      themeMode: ThemeMode.light,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: colors.seed
+        colorScheme: const ColorScheme(
+          brightness: Brightness.light,
+          background: Colors.white,
+          onBackground: colors.dark,
+          surface: Colors.white,
+          onSurface: colors.dark,
+          primary: colors.primary,
+          onPrimary:  Colors.white,
+          secondary: colors.lightBlue,
+          onSecondary: colors.dark,
+          error: colors.red,
+          onError: Colors.white
         ),
         useMaterial3: true,
       ),
-      home: const ConnectScreen(),
+      home: const Placeholder(),
     );
   }
 }
+

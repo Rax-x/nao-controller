@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:nao_controller/colors.dart' as colors;
+import 'package:nao_controller/utils/utils.dart';
 
 class ControllerWidget extends StatelessWidget {
 
@@ -84,7 +85,7 @@ class ControllerWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     
-    final size = MediaQuery.of(context).size;
+    final size = screenSizeOf(context);
 
     final circleDiameter = size.width * 0.5;
     

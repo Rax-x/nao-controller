@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:nao_controller/colors.dart' as colors;
-import 'dart:math' as math;
 
+import 'package:nao_controller/presentation/widgets/apply_gradient.dart';
 import 'package:nao_controller/presentation/widgets/input_field.dart';
-
-// TODO: fix ui
+import 'package:nao_controller/utils/utils.dart';
 
 class ConnectScreen extends StatefulWidget {
   const ConnectScreen({super.key});
@@ -34,8 +32,8 @@ class _ConnectScreenState extends State<ConnectScreen> {
   @override
   Widget build(BuildContext context) {
 
-    final size = MediaQuery.of(context).size;
-    final backgroundColor = Theme.of(context).colorScheme.primary;
+    final size = screenSizeOf(context);
+    final backgroundColor = colorSchemeOf(context).primary;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -83,33 +81,17 @@ class _ConnectScreenState extends State<ConnectScreen> {
               left: 0,
               right: 0,
               child: Center(
-                child: Container(
+                child: ApplyGradient(
                   width: size.width * 0.4,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.white,
-                        backgroundColor
-                      ],
-                      transform: const GradientRotation(math.pi * 2)
-                    ),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black38,
-                        offset: Offset(-2, 3.5),
-                        blurRadius: 5
-                      )
-                    ],
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(60)
-                    )
-                  ),
+                  gradientColors: [
+                    Colors.white,
+                    backgroundColor
+                  ],
                   child: TextButton(
                     child: Text(
                       "Connetti".toUpperCase(),
                       style: const TextStyle(
+                        fontWeight: FontWeight.w800,
                         color: Colors.white
                       ),
                     ),
@@ -118,7 +100,6 @@ class _ConnectScreenState extends State<ConnectScreen> {
                 )
               )
             )
-
           ],
         )
       )
