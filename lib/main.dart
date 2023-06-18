@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod/riverpod.dart';
+import 'package:nao_controller/presentation/screens/connect_screen.dart';
 
 import 'colors.dart' as colors;
 
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: Container(),
+      home: const ConnectScreen(),
     );
   }
 }
