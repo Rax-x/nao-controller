@@ -2,11 +2,11 @@ import 'package:nao_controller/domain/repositories/nao_actions_repository.dart';
 import 'package:nao_controller/utils/resource.dart';
 import 'package:nao_controller/utils/usecase.dart';
 
-class BatteryInfoUseCase implements UseCase<Resource, NaoCoordinatesParams>{
+class WalkUseCase implements UseCase<Resource, NaoCoordinatesParams>{
 
   final NaoActionsRepository _repo;
 
-  BatteryInfoUseCase(this._repo);
+  WalkUseCase(this._repo);
 
   @override
   Future<Resource> call(NaoCoordinatesParams params) async {

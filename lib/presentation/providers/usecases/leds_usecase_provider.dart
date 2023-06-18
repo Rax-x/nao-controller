@@ -1,0 +1,8 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nao_controller/domain/usecases/leds_usecase.dart';
+import 'package:nao_controller/presentation/providers/repositories/nao_actions_repository_provider.dart';
+
+final ledsUseCaseProvider = Provider<LedsUseCase>((ref){
+  final repo = ref.watch(naoActionsRepositoryProvider);
+  return LedsUseCase(repo);
+});
