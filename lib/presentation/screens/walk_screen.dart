@@ -51,7 +51,7 @@ class _WalkScreenState extends ConsumerState<WalkScreen> {
         foregroundColor: Colors.white,
         title: const Text("Movimenti"),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () => Navigator.of(context).pop(),
         )
       ),
