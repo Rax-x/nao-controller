@@ -120,6 +120,7 @@ class _WalkScreenState extends ConsumerState<WalkScreen> {
                         "Invia".toUpperCase(),
                         style: const TextStyle(
                           fontWeight: FontWeight.w800,
+                          fontSize: 17,
                           color: Colors.white
                         ),
                       ),

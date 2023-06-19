@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nao_controller/presentation/screens/dialogs/battery_dialog.dart';
+import 'package:nao_controller/presentation/screens/dialogs/leds_dialog.dart';
+import 'package:nao_controller/presentation/screens/dialogs/talk_dialog.dart';
 import 'package:nao_controller/utils/utils.dart';
 
 import 'package:nao_controller/colors.dart' as colors;
@@ -35,7 +38,14 @@ class HomeScreen extends ConsumerWidget {
           padding: const EdgeInsets.all(20),
           children: [
             GestureDetector(
-              onTap: (){},
+              onTap: (){
+                showDialog(
+                  context: context, 
+                  builder: (context){
+                    return const TalkDialog();
+                  }
+                );
+              },
               child: Container(
                 decoration: BoxDecoration(
                   color: colors.red,
@@ -83,7 +93,12 @@ class HomeScreen extends ConsumerWidget {
               )
             ),
             GestureDetector(
-              onTap: (){},
+              onTap: (){
+                showDialog(
+                  context: context, 
+                  builder: (context) => const LedsDialog()
+                );
+              },
               child: Container(
                 decoration: BoxDecoration(
                   color: colors.lightBlue,
@@ -107,7 +122,12 @@ class HomeScreen extends ConsumerWidget {
               )
             ),
             GestureDetector(
-              onTap: (){},
+              onTap: (){
+                showDialog(
+                  context: context, 
+                  builder: (context) => const BatteryDialog()
+                );
+              },
               child: Container(
                 decoration: BoxDecoration(
                   color: colors.green,

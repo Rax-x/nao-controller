@@ -92,7 +92,8 @@ class _ConnectScreenState extends State<ConnectScreen> {
                       "Connetti".toUpperCase(),
                       style: const TextStyle(
                         fontWeight: FontWeight.w800,
-                        color: Colors.white
+                        color: Colors.white,
+                        fontSize: 17,
                       ),
                     ),
                     onPressed: () {},
