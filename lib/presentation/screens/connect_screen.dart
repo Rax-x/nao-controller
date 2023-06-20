@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:nao_controller/presentation/providers/states/connect_state_notifier.dart';
 
 import 'package:nao_controller/presentation/widgets/apply_gradient.dart';
 import 'package:nao_controller/presentation/widgets/input_field.dart';
 import 'package:nao_controller/utils/utils.dart';
 
-class ConnectScreen extends StatefulWidget {
+import 'package:nao_controller/app_routes.dart' as routes;
+
+class ConnectScreen extends ConsumerStatefulWidget {
   const ConnectScreen({super.key});
 
   @override
-  State<ConnectScreen> createState() => _ConnectScreenState();
+  ConsumerState<ConnectScreen> createState() => _ConnectScreenState();
 }
 
-class _ConnectScreenState extends State<ConnectScreen> {
+class _ConnectScreenState extends ConsumerState<ConnectScreen> {
 
   late TextEditingController _editingController;
 
@@ -29,11 +33,28 @@ class _ConnectScreenState extends State<ConnectScreen> {
     _editingController.dispose();
   }
 
+  void _handleState(BuildContext context, ConnectState state){
+    if(state is! ConnectStateSuccess) return;
+
+    navigateTo(
+      context, 
+      routes.home, 
+      shouldPopOldRoutes: true
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 
     final size = screenSizeOf(context);
     final backgroundColor = colorSchemeOf(context).primary;
+
+    final state = ref.watch(connectStateNotifier);
+    final notifier = ref.read(connectStateNotifier.notifier);
+
+    ref.listen<ConnectState>(connectStateNotifier, (_, state){
+      _handleState(context, state);
+    });
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -81,24 +102,28 @@ class _ConnectScreenState extends State<ConnectScreen> {
               left: 0,
               right: 0,
               child: Center(
-                child: ApplyGradient(
-                  width: size.width * 0.4,
-                  gradientColors: [
-                    Colors.white,
-                    backgroundColor
-                  ],
-                  child: TextButton(
-                    child: Text(
-                      "Connetti".toUpperCase(),
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w800,
-                        color: Colors.white,
-                        fontSize: 17,
+                child: (state is! ConnectStateLoading) 
+                  ? ApplyGradient(
+                    width: size.width * 0.4,
+                    gradientColors: [
+                      Colors.white,
+                      backgroundColor
+                    ],
+                    child: TextButton(
+                      child: Text(
+                        "Connetti".toUpperCase(),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                          fontSize: 17,
+                        ),
                       ),
-                    ),
-                    onPressed: () {},
-                  )
-                )
+                      onPressed: () {
+                        notifier.connect(_editingController.text.trim());
+                      },
+                    )
+                  ) 
+                  : const CircularProgressIndicator()
               )
             )
           ],
