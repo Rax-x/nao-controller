@@ -3,5 +3,6 @@ enum NaoEvent {
   talk,
   changeLedColor,
   batteryInfo,
-  closeServer
+  closeServer,
+  ping
 }

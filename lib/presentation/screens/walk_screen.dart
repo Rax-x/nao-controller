@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nao_controller/presentation/providers/states/walk_state_notifier.dart';
 import 'package:nao_controller/presentation/widgets/apply_gradient.dart';
 import 'package:nao_controller/presentation/widgets/controller_widget.dart';
 import 'package:nao_controller/presentation/widgets/input_field.dart';
@@ -36,13 +37,28 @@ class _WalkScreenState extends ConsumerState<WalkScreen> {
     _yAxisEditingController.dispose();
   }
 
+  void _handleErrorState(WalkState state){
+    if(state is WalkStateError){
+      showErrorSnackBar(context, state.message);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     
     bool isCustomMovmentsChecked = ref.watch(_customMomvementsProvider);
 
+    final notifier = ref.read(walkStateNotifierProvider.notifier);
+    final state = ref.watch(walkStateNotifierProvider);
+
+    bool isLoading = state is WalkStateLoading;
+
     final backgroundColor = colorSchemeOf(context).primary;
     final width = screenSizeOf(context).width;
+
+    ref.listen<WalkState>(walkStateNotifierProvider, (_, state){
+      _handleErrorState(state);
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -60,30 +76,33 @@ class _WalkScreenState extends ConsumerState<WalkScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             ControllerWidget(
-              onUpPressed: (){}, 
-              onDownPressed: (){}, 
-              onLeftPressed: (){}, 
-              onRightPressed: (){}
+              disabled: isCustomMovmentsChecked || isLoading,
+              onUpPressed: () => notifier.walkTo(1, 0), 
+              onDownPressed: () => notifier.walkTo(-1, 0), 
+              onLeftPressed: () => notifier.walkTo(0, 1), 
+              onRightPressed: () => notifier.walkTo(0, -1)
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Text(
-                  "Coordinate Personalizzate",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold
+            (isCustomMovmentsChecked && isLoading) 
+              ? const CircularProgressIndicator()
+              : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text(
+                    "Coordinate Personalizzate",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold
+                    ),
                   ),
-                ),
-                Checkbox(
-                  value: isCustomMovmentsChecked, 
-                  onChanged: (isChecked){
-                    ref.read(_customMomvementsProvider.notifier)
-                      .state = isChecked ?? false;
-                  }
-                )
-              ],
-            ),
+                  Checkbox(
+                    value: isCustomMovmentsChecked, 
+                    onChanged: (isChecked){
+                      ref.read(_customMomvementsProvider.notifier)
+                        .state = isChecked ?? false;
+                    }
+                  )
+                ],
+              ),
             if(isCustomMovmentsChecked) Column(
               children: [
                 Row(
@@ -115,7 +134,7 @@ class _WalkScreenState extends ConsumerState<WalkScreen> {
                       Colors.white,
                       backgroundColor
                     ],
-                    child: TextButton(
+                    child: !isLoading ? TextButton(
                       child: Text(
                         "Invia".toUpperCase(),
                         style: const TextStyle(
@@ -124,8 +143,13 @@ class _WalkScreenState extends ConsumerState<WalkScreen> {
                           color: Colors.white
                         ),
                       ),
-                      onPressed: () {},
-                    )
+                      onPressed: () {
+                        notifier.walkTo(
+                          double.tryParse(_xAxisEditingController.text) ?? 0,
+                          double.tryParse(_yAxisEditingController.text) ?? 0
+                        );
+                      },
+                    ) : const CircularProgressIndicator()
                   )
                 )
               ],

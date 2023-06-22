@@ -57,4 +57,10 @@ class NaoService {
       'type': NaoEvent.closeServer.index
     });
   }
+
+  Future<http.Response> pingServer() async {
+    return await _sendPostRequest({
+      'type': NaoEvent.ping.index
+    });
+  }
 }

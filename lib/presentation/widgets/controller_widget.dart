@@ -9,10 +9,11 @@ class ControllerWidget extends StatelessWidget {
   final void Function() onDownPressed;
   final void Function() onLeftPressed;
   final void Function() onRightPressed;
-  
+  final bool disabled;
 
   const ControllerWidget({
     super.key, 
+    this.disabled = false,
     required this.onUpPressed,
     required this.onDownPressed,
     required this.onLeftPressed,
@@ -32,7 +33,7 @@ class ControllerWidget extends StatelessWidget {
         left: 0,
         right: 0,
         child: GestureDetector(
-          onTap: onUpPressed,
+          onTap: !disabled ? onUpPressed : null,
           child: Icon(
             Icons.keyboard_arrow_up,
             color: Colors.white,
@@ -45,7 +46,7 @@ class ControllerWidget extends StatelessWidget {
         right: 0,
         bottom: padding,
         child: GestureDetector(
-          onTap: onDownPressed,
+          onTap: !disabled ? onDownPressed : null,
           child: Icon(
             Icons.keyboard_arrow_down,
             color: Colors.white,
@@ -58,7 +59,7 @@ class ControllerWidget extends StatelessWidget {
         left: padding,
         bottom: 0,
         child: GestureDetector(
-          onTap: onLeftPressed,
+          onTap: !disabled ? onLeftPressed : null,
           child: Icon(
             Icons.keyboard_arrow_left,
             color: Colors.white,
@@ -71,7 +72,7 @@ class ControllerWidget extends StatelessWidget {
         right: padding,
         bottom: 0,
         child: GestureDetector(
-          onTap: onRightPressed,
+          onTap: !disabled ? onRightPressed : null,
           child: Icon(
             Icons.keyboard_arrow_right,
             color: Colors.white,

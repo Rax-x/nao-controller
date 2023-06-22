@@ -14,4 +14,5 @@ abstract class NaoActionsRepository {
   Future<Resource> ledRasta();
 
   Future<Resource> closeServer();  
+  Future<Resource> pingServer();
 }
