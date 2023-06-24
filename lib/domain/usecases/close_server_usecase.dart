@@ -10,6 +10,6 @@ class CloseServerUseCase implements UseCase<Resource, UseCaseNoParams>{
 
   @override
   Future<Resource> call(UseCaseNoParams params) async {
-    return await _repo.closeServer();
+    return _repo.closeServer();
   }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nao_controller/domain/usecases/battery_info_usecase.dart';
+import 'package:nao_controller/domain/usecases/disconnect_usecase.dart';
 import 'package:nao_controller/domain/usecases/ping_server_usecase.dart';
 import 'package:nao_controller/presentation/providers/usecases/battery_info_usecase_provider.dart';
+import 'package:nao_controller/presentation/providers/usecases/disconnect_usecase_provider.dart';
 import 'package:nao_controller/presentation/providers/usecases/ping_server_usecase_provider.dart';
 import 'package:nao_controller/utils/resource.dart';
 import 'package:nao_controller/utils/usecase.dart';
@@ -10,10 +12,12 @@ final homeStateNotifierProvider =
   StateNotifierProvider<HomeStateNotifier, HomeState>((ref){
     final pingUseCase = ref.watch(pingServerUseCaseProvider);
     final batteryInfoUseCase = ref.watch(batteryInfoUseCaseProvider);
+    final disconnectUseCase = ref.watch(disconnectUseCaseProvider);
 
     return HomeStateNotifier(
       pingUseCase: pingUseCase,
-      batteryUseCase: batteryInfoUseCase 
+      batteryUseCase: batteryInfoUseCase,
+      disconnectUseCase: disconnectUseCase 
     );
   });
 
@@ -21,10 +25,12 @@ final homeStateNotifierProvider =
 class HomeStateNotifier extends StateNotifier<HomeState>{
   
   final BatteryInfoUseCase batteryUseCase;
-  
+  final DisconnectUseCase disconnectUseCase;
+
   HomeStateNotifier({
     required PingServerUseCase pingUseCase,
     required this.batteryUseCase,
+    required this.disconnectUseCase
   }) : super(HomeState.loading()) {
     pingUseCase.call(UseCaseNoParams()).then((res){
       state = res is ResourceSuccess
@@ -33,27 +39,18 @@ class HomeStateNotifier extends StateNotifier<HomeState>{
           (res as ResourceError).message,
           shoudReturnToConnectScreen: true
         );
-    }).catchError((_){
+    }).catchError((err){
       state = HomeState.error(
-        "An Error occurred!", 
+        err.toString(), 
         shoudReturnToConnectScreen: true
       );
     });
   }
 
-  Future<String> getBatteryInfo() async {
+  Future<void> disconnect() async {
     state = HomeState.loading();
-    final resource = await batteryUseCase.call(UseCaseNoParams());
-
-    if(resource is ResourceError){
-      state = HomeState.error(resource.message);
-      return "Error!";
-    }
-
-    final batteryFormatted = 
-      "${(resource as ResourceSuccess).data!['battery_info']}%";
-
-    return batteryFormatted;
+    disconnectUseCase.call(UseCaseNoParams());
+    state = HomeState.success();
   }
 
 }

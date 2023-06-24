@@ -82,7 +82,7 @@ class _WalkScreenState extends ConsumerState<WalkScreen> {
               onLeftPressed: () => notifier.walkTo(0, 1), 
               onRightPressed: () => notifier.walkTo(0, -1)
             ),
-            (isCustomMovmentsChecked && isLoading) 
+            (!isCustomMovmentsChecked && isLoading) 
               ? const CircularProgressIndicator()
               : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -128,29 +128,31 @@ class _WalkScreenState extends ConsumerState<WalkScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 30),
-                  child: ApplyGradient(
-                    width: width * 0.4,
-                    gradientColors: [
-                      Colors.white,
-                      backgroundColor
-                    ],
-                    child: !isLoading ? TextButton(
-                      child: Text(
-                        "Invia".toUpperCase(),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w800,
-                          fontSize: 17,
-                          color: Colors.white
-                        ),
-                      ),
-                      onPressed: () {
-                        notifier.walkTo(
-                          double.tryParse(_xAxisEditingController.text) ?? 0,
-                          double.tryParse(_yAxisEditingController.text) ?? 0
-                        );
-                      },
-                    ) : const CircularProgressIndicator()
-                  )
+                  child: (isLoading) 
+                    ? const CircularProgressIndicator() 
+                    : ApplyGradient(
+                        width: width * 0.4,
+                        gradientColors: [
+                          Colors.white,
+                          backgroundColor
+                        ],
+                        child: TextButton(
+                          child: Text(
+                            "Invia".toUpperCase(),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 17,
+                              color: Colors.white
+                            ),
+                          ),
+                          onPressed: () {
+                            notifier.walkTo(
+                              double.tryParse(_xAxisEditingController.text) ?? 0,
+                              double.tryParse(_yAxisEditingController.text) ?? 0
+                            );
+                          },
+                        )
+                      )
                 )
               ],
             )

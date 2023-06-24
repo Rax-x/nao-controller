@@ -15,8 +15,8 @@ class NaoService {
 
     final body = jsonEncode(obj);
 
-    return await http.post(
-      Uri.http(_url),
+    return http.post(
+      Uri.parse(_url),
       headers: {
         'Content-Type': 'application/json',
         'Content-Length': body.length.toString()
@@ -26,40 +26,40 @@ class NaoService {
   }
 
   Future<http.Response> speechText(String message) async {
-    return await _sendPostRequest({
+    return _sendPostRequest({
       'type': NaoEvent.talk.index,
       'payload': message
     });
   } 
 
   Future<http.Response> walk(Map<String, double> coordinates) async {  
-    return await _sendPostRequest({
+    return _sendPostRequest({
       'type': NaoEvent.walk.index,
       'payload': coordinates
     });
   } 
 
   Future<http.Response> changeLedColor(NaoChangeLedColorEventType type) async {
-    return await _sendPostRequest({
+    return _sendPostRequest({
       'type': NaoEvent.changeLedColor.index,
       'payload': type.index
     });
   } 
 
   Future<http.Response> getBatteryInfo() async {
-    return await _sendPostRequest({
+    return _sendPostRequest({
       'type': NaoEvent.batteryInfo.index
     });
   }
 
   Future<http.Response> closeServer() async {
-    return await _sendPostRequest({
+    return _sendPostRequest({
       'type': NaoEvent.closeServer.index
     });
   }
 
   Future<http.Response> pingServer() async {
-    return await _sendPostRequest({
+    return _sendPostRequest({
       'type': NaoEvent.ping.index
     });
   }

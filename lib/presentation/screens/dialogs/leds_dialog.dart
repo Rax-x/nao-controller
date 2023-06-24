@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nao_controller/domain/entities/led_event.dart';
+import 'package:nao_controller/domain/entities/led_mode.dart';
+import 'package:nao_controller/presentation/providers/states/leds_dialog_state_notifier.dart';
 import 'package:nao_controller/presentation/widgets/apply_gradient.dart';
 import 'package:nao_controller/utils/utils.dart';
 
@@ -8,11 +9,28 @@ class LedsDialog extends ConsumerWidget {
   
   const LedsDialog({super.key});
 
+  void _handleState(BuildContext context, LedsDialogState state){
+    if(state.hadError){
+      showErrorSnackBar(context, state.errorMessage!);
+    }
+
+    if(state.hadError || state.sent){
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     
     final size = screenSizeOf(context);
     final backgroundColor = colorSchemeOf(context).primary;
+
+    final state = ref.watch(ledsDialogStateNotifier);
+    final notifier = ref.read(ledsDialogStateNotifier.notifier);
+
+    ref.listen<LedsDialogState>(ledsDialogStateNotifier, (_, state){
+      _handleState(context, state);
+    });
 
     return Dialog(
       shape: const RoundedRectangleBorder(
@@ -31,72 +49,76 @@ class LedsDialog extends ConsumerWidget {
                 children: [
                   ListTile(
                     title: const Text('Rasta Animation'),
-                    leading: Radio<LedEvent>(
-                      value: LedEvent.rastaEvent,
-                      groupValue: null,
-                      onChanged: (LedEvent? value) {
+                    leading: Radio<LedMode>(
+                      value: LedMode.rasta,
+                      groupValue: state.currentMode,
+                      onChanged: (LedMode? value) {
+                        notifier.updateMode(value ?? LedMode.randomEyes);
                       },
                     ),
                   ),
                   ListTile(
                     title: const Text('Random eyes Animation'),
-                    leading: Radio<LedEvent>(
-                      value: LedEvent.randomEyesEvent,
-                      groupValue: null,
-                      onChanged: (LedEvent? value) {
+                    leading: Radio<LedMode>(
+                      value: LedMode.randomEyes,
+                      groupValue: state.currentMode,
+                      onChanged: (LedMode? value) {
+                        notifier.updateMode(value ?? LedMode.randomEyes);
                       },
                     ),
                   ),
                   ListTile(
                     title: const Text('Off'),
-                    leading: Radio<LedEvent>(
-                      value: LedEvent.offEvent,
-                      groupValue: null,
-                      onChanged: (LedEvent? value) {
+                    leading: Radio<LedMode>(
+                      value: LedMode.off,
+                      groupValue: state.currentMode,
+                      onChanged: (LedMode? value) {
+                        notifier.updateMode(value ?? LedMode.randomEyes);
                       },
                     ),
                   ),
                   ListTile(
                     title: const Text('On'),
-                    leading: Radio<LedEvent>(
-                      value: LedEvent.onEvent,
-                      groupValue: null,
-                      onChanged: (LedEvent? value) {
+                    leading: Radio<LedMode>(
+                      value: LedMode.on,
+                      groupValue: state.currentMode,
+                      onChanged: (LedMode? value) {
+                        notifier.updateMode(value ?? LedMode.randomEyes);
                       },
                     ),
                   ),
                   ListTile(
                     title: const Text('Reset'),
-                    leading: Radio<LedEvent>(
-                      value: LedEvent.resetEvent,
-                      groupValue: null,
-                      onChanged: (LedEvent? value) {
+                    leading: Radio<LedMode>(
+                      value: LedMode.reset,
+                      groupValue: state.currentMode,
+                      onChanged: (LedMode? value) {
+                        notifier.updateMode(value ?? LedMode.randomEyes);
                       },
                     ),
                   ),
                 ],
               ),
-              ApplyGradient(
-                width: size.width * 0.3,
-                gradientColors: [
-                  Colors.white,
-                  backgroundColor
-                ],
-                child: TextButton(
-                  onPressed: (){
-                    // TODO: send event to nao
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text(
-                    "Invia",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 17,
-                      fontWeight: FontWeight.w800
-                    ),
+              (state.isLoading) 
+                ? const CircularProgressIndicator() 
+                : ApplyGradient(
+                    width: size.width * 0.3,
+                    gradientColors: [
+                      Colors.white,
+                      backgroundColor
+                    ],
+                    child: TextButton(
+                      onPressed: () => notifier.sendLedsMode(),
+                      child: const Text(
+                        "Invia",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w800
+                        ),
+                      )
+                    ), 
                   )
-                ), 
-              )
             ]
           ),
         ),

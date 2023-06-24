@@ -10,6 +10,6 @@ class BatteryInfoUseCase implements UseCase<Resource, UseCaseNoParams>{
 
   @override
   Future<Resource> call(UseCaseNoParams params) async {
-    return await _repo.getBatteryInfo();
+    return _repo.getBatteryInfo();
   }
 }

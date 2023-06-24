@@ -10,6 +10,6 @@ class PingServerUseCase extends UseCase<Resource, UseCaseNoParams>{
   
   @override
   Future<Resource> call(UseCaseNoParams params) async {
-    return await _repo.pingServer();
+    return _repo.pingServer();
   }
 }

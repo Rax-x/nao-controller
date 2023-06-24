@@ -10,6 +10,6 @@ class TalkUseCase implements UseCase<Resource, String>{
 
   @override
   Future<Resource> call(String message) async {
-    return await _repo.talk(message);
+    return _repo.talk(message);
   }
 }

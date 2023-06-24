@@ -1,28 +1,28 @@
-import 'package:nao_controller/domain/entities/led_event.dart';
+import 'package:nao_controller/domain/entities/led_mode.dart';
 import 'package:nao_controller/domain/repositories/nao_actions_repository.dart';
 import 'package:nao_controller/utils/resource.dart';
 import 'package:nao_controller/utils/usecase.dart';
 
-class LedsUseCase implements UseCase<Resource, LedEvent>{
+class LedsUseCase implements UseCase<Resource, LedMode>{
 
   final NaoActionsRepository _repo;
 
   LedsUseCase(this._repo);
 
   @override
-  Future<Resource> call(LedEvent event) async {
+  Future<Resource> call(LedMode mode) async {
     
-    switch(event){
-      case LedEvent.onEvent:
-        return await _repo.ledOn();
-      case LedEvent.offEvent:
-        return await _repo.ledOff();
-      case LedEvent.randomEyesEvent:
-        return await _repo.ledRandomEyes();
-      case LedEvent.rastaEvent:
-        return await _repo.ledRasta();
-      case LedEvent.resetEvent:
-        return await _repo.ledReset();
+    switch(mode){
+      case LedMode.on:
+        return _repo.ledOn();
+      case LedMode.off:
+        return _repo.ledOff();
+      case LedMode.randomEyes:
+        return _repo.ledRandomEyes();
+      case LedMode.rasta:
+        return _repo.ledRasta();
+      case LedMode.reset:
+        return _repo.ledReset();
       default:
         break;
     }

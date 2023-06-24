@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:nao_controller/presentation/providers/states/home_state_notifier.dart';
 import 'package:nao_controller/presentation/screens/dialogs/battery_dialog.dart';
 import 'package:nao_controller/presentation/screens/dialogs/leds_dialog.dart';
 import 'package:nao_controller/presentation/screens/dialogs/talk_dialog.dart';
+import 'package:nao_controller/presentation/widgets/icon_card.dart';
 import 'package:nao_controller/utils/utils.dart';
 
 import 'package:nao_controller/colors.dart' as colors;
@@ -17,6 +19,21 @@ class HomeScreen extends ConsumerWidget {
     final backgroundColor = colorSchemeOf(context).primary;
     final size = screenSizeOf(context);
 
+    ref.listen(homeStateNotifierProvider, (_, state) {
+      if(state is! HomeStateError) return;
+
+      showErrorSnackBar(context, state.error);
+
+      if(state.shoudReturnToConnectScreen){
+        navigateTo(
+          context, 
+          routes.connect, 
+          shouldPopOldRoutes: true
+        );
+      }
+      
+    });
+
     return Scaffold(
       appBar: AppBar(
         elevation: 3,
@@ -25,10 +42,20 @@ class HomeScreen extends ConsumerWidget {
         title: const Text("Azioni"),
         actions: [
           IconButton(
-            onPressed: (){}, 
+            onPressed: (){
+              ref.read(homeStateNotifierProvider.notifier)
+                .disconnect()
+                .whenComplete((){
+                  navigateTo(
+                    context, 
+                    routes.connect, 
+                    shouldPopOldRoutes: true
+                  );
+                });
+            }, 
             icon: const Icon(Icons.logout_rounded)
           )
-        ],
+        ]
       ),
       body: Center(
         child: GridView.count(
@@ -37,122 +64,69 @@ class HomeScreen extends ConsumerWidget {
           crossAxisCount: 2,
           padding: const EdgeInsets.all(20),
           children: [
-            GestureDetector(
-              onTap: (){
+            IconCard(
+              onClick: (){
                 showDialog(
                   context: context, 
-                  builder: (context){
-                    return const TalkDialog();
-                  }
+                  builder: (context)=> ProviderScope(
+                    parent: ProviderScope.containerOf(context),
+                    child: const TalkDialog()
+                  )
                 );
               },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: colors.red,
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(40)
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      offset: const Offset(0, 1),
-                      blurRadius: 5,
-                      color: colors.dark.withOpacity(0.3),
-                    )
-                  ]
-                ),
-                padding: const EdgeInsets.all(8),
-                child: Icon(
-                  Icons.record_voice_over_rounded,
-                  size: size.width * 0.2,
-                  color: Colors.white,
-                ),
+              backgroundColor: colors.red,
+              icon: Icon(
+                Icons.record_voice_over_rounded,
+                size: size.width * 0.2,
+                color: Colors.white,
               )
             ),
-            GestureDetector(
-              onTap: () => navigateTo(context, routes.walk),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: colors.yellow,
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(40)
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      offset: const Offset(0, 1),
-                      blurRadius: 5,
-                      color: colors.dark.withOpacity(0.3),
-                    )
-                  ]
-                ),
-                padding: const EdgeInsets.all(8),
-                child: Icon(
-                  Icons.directions_run_rounded,
-                  size: size.width * 0.2,
-                  color: Colors.white,
-                ),
+            IconCard(
+              onClick: () => navigateTo(context, routes.walk),
+              backgroundColor: colors.yellow,
+              icon: Icon(
+                Icons.directions_run_rounded,
+                size: size.width * 0.2,
+                color: Colors.white,
               )
             ),
-            GestureDetector(
-              onTap: (){
+            IconCard(
+              onClick: (){
                 showDialog(
                   context: context, 
-                  builder: (context) => const LedsDialog()
+                  builder: (context) => ProviderScope(
+                    parent: ProviderScope.containerOf(context),
+                    child: const LedsDialog()
+                  )
                 );
               },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: colors.lightBlue,
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(40)
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      offset: const Offset(0, 1),
-                      blurRadius: 5,
-                      color: colors.dark.withOpacity(0.3),
-                    )
-                  ]
-                ),
-                padding: const EdgeInsets.all(8),
-                child: Icon(
-                  Icons.light_mode_rounded,
-                  size: size.width * 0.2,
-                  color: Colors.white,
-                ),
+              backgroundColor: colors.lightBlue,
+              icon: Icon(
+                Icons.light_mode_rounded,
+                size: size.width * 0.2,
+                color: Colors.white,
               )
             ),
-            GestureDetector(
-              onTap: (){
+            IconCard(
+              onClick: (){
                 showDialog(
                   context: context, 
-                  builder: (context) => const BatteryDialog()
+                  builder: (context) => ProviderScope(
+                    parent: ProviderScope.containerOf(context),
+                    child: const BatteryDialog()
+                  )
                 );
               },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: colors.green,
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(40)
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      offset: const Offset(0, 1),
-                      blurRadius: 5,
-                      color: colors.dark.withOpacity(0.3),
-                    )
-                  ]
-                ),
-                padding: const EdgeInsets.all(8),
-                child: Icon(
-                  Icons.battery_5_bar_rounded,
-                  size: size.width * 0.2,
-                  color: Colors.white,
-                ),
+              backgroundColor: colors.green,
+              icon: Icon(
+                Icons.battery_5_bar_rounded,
+                size: size.width * 0.2,
+                color: Colors.white,
               )
             )
-          ],
+          ]
         )
-      ),
+      )
     );
   }
 }
