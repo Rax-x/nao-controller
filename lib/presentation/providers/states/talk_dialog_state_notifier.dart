@@ -34,26 +34,26 @@ class TalkDialogStateNotifier extends StateNotifier<TalkDialogState>{
 
 class TalkDialogState{
   
-  bool isLoading;
-  bool hadError;
-  bool sent;
+  final bool isLoading;
+  final bool hadError;
+  final bool isSent;
 
-  String? errorMessage;
+  final String? error;
   
   TalkDialogState({
-    this.sent = false,
+    this.isSent = false,
     this.isLoading = false,
     this.hadError = false,
-    this.errorMessage
+    this.error
   });
 
-  factory TalkDialogState.success() => TalkDialogState(sent: true);
+  factory TalkDialogState.success() => TalkDialogState(isSent: true);
   factory TalkDialogState.loading() => TalkDialogState(isLoading: true);
 
   factory TalkDialogState.error(String error) {
     return TalkDialogState(
       hadError: true, 
-      errorMessage: error, 
+      error: error, 
     );  
   }
 

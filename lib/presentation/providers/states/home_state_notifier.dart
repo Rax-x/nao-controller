@@ -1,22 +1,22 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:nao_controller/domain/usecases/battery_info_usecase.dart';
+import 'package:nao_controller/domain/usecases/close_server_usecase.dart';
 import 'package:nao_controller/domain/usecases/disconnect_usecase.dart';
 import 'package:nao_controller/domain/usecases/ping_server_usecase.dart';
-import 'package:nao_controller/presentation/providers/usecases/battery_info_usecase_provider.dart';
+import 'package:nao_controller/presentation/providers/usecases/close_server_usecase_provider.dart';
 import 'package:nao_controller/presentation/providers/usecases/disconnect_usecase_provider.dart';
 import 'package:nao_controller/presentation/providers/usecases/ping_server_usecase_provider.dart';
 import 'package:nao_controller/utils/resource.dart';
 import 'package:nao_controller/utils/usecase.dart';
 
 final homeStateNotifierProvider = 
-  StateNotifierProvider<HomeStateNotifier, HomeState>((ref){
+  StateNotifierProvider.autoDispose<HomeStateNotifier, HomeState>((ref){
     final pingUseCase = ref.watch(pingServerUseCaseProvider);
-    final batteryInfoUseCase = ref.watch(batteryInfoUseCaseProvider);
+    final closeServerUseCase = ref.watch(closeServerProvider);
     final disconnectUseCase = ref.watch(disconnectUseCaseProvider);
 
     return HomeStateNotifier(
       pingUseCase: pingUseCase,
-      batteryUseCase: batteryInfoUseCase,
+      closeServerUseCase: closeServerUseCase,
       disconnectUseCase: disconnectUseCase 
     );
   });
@@ -24,68 +24,53 @@ final homeStateNotifierProvider =
 
 class HomeStateNotifier extends StateNotifier<HomeState>{
   
-  final BatteryInfoUseCase batteryUseCase;
   final DisconnectUseCase disconnectUseCase;
+  final CloseServerUseCase closeServerUseCase;
 
   HomeStateNotifier({
     required PingServerUseCase pingUseCase,
-    required this.batteryUseCase,
-    required this.disconnectUseCase
+    required this.disconnectUseCase,
+    required this.closeServerUseCase
   }) : super(HomeState.loading()) {
+
     pingUseCase.call(UseCaseNoParams()).then((res){
       state = res is ResourceSuccess
-        ? HomeState.none()
-        : HomeState.error(
-          (res as ResourceError).message,
-          shoudReturnToConnectScreen: true
-        );
+        ? HomeState()
+        : HomeState.error((res as ResourceError).message);
     }).catchError((err){
-      state = HomeState.error(
-        err.toString(), 
-        shoudReturnToConnectScreen: true
-      );
+      state = HomeState.error(err.toString());
     });
+
+  }
+
+  Future<void> shutdownServer() async {
+    state = HomeState.loading();
+    disconnectUseCase.call(UseCaseNoParams());
+    closeServerUseCase.call(UseCaseNoParams());
+    state = HomeState();
   }
 
   Future<void> disconnect() async {
     state = HomeState.loading();
     disconnectUseCase.call(UseCaseNoParams());
-    state = HomeState.success();
+    state = HomeState();
   }
 
 }
 
-sealed class HomeState {
-  HomeState._();
+class HomeState {
 
-  factory HomeState.none() => HomeStateNone();
-  factory HomeState.success() => HomeStateSuccess();
-  factory HomeState.loading() => HomeStateLoading();
-  factory HomeState.error(
-    String error, 
-    {bool shoudReturnToConnectScreen = false}
-  ){
-    return HomeStateError(
-      error, 
-      shoudReturnToConnectScreen: shoudReturnToConnectScreen
-    );
-  }
-}
+  final bool isLoading;
+  final bool hadError;
 
-class HomeStateNone extends HomeState{
-  HomeStateNone() : super._();
-}
+  final String? error;
 
-class HomeStateSuccess extends HomeState{
-  HomeStateSuccess() : super._();
-}
+  HomeState({
+    this.hadError = false,
+    this.isLoading = false,
+    this.error
+  });
 
-class HomeStateLoading extends HomeState{
-  HomeStateLoading() : super._();
-}
-
-class HomeStateError extends HomeState{
-  final String error;
-  final bool shoudReturnToConnectScreen;
-  HomeStateError(this.error, {this.shoudReturnToConnectScreen = false}) : super._();
+  factory HomeState.loading() => HomeState(isLoading: true);
+  factory HomeState.error(String error) => HomeState(hadError: true, error: error);
 }

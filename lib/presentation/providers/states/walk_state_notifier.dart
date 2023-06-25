@@ -4,7 +4,7 @@ import 'package:nao_controller/presentation/providers/usecases/walk_usecase_prov
 import 'package:nao_controller/utils/resource.dart';
 
 final walkStateNotifierProvider = 
-  StateNotifierProvider<WalkStateNotifier, WalkState>((ref){
+  StateNotifierProvider.autoDispose<WalkStateNotifier, WalkState>((ref){
     final walkUseCase = ref.watch(walkUseCaseProvider);
     return WalkStateNotifier(walkUseCase);
   });
@@ -13,7 +13,7 @@ class WalkStateNotifier extends StateNotifier<WalkState> {
   
   final WalkUseCase _walkUseCase;
   
-  WalkStateNotifier(this._walkUseCase) : super(WalkState.none());
+  WalkStateNotifier(this._walkUseCase) : super(WalkState());
   
   Future<void> walkTo(double x, double y) async {
     state = WalkState.loading();
@@ -24,34 +24,24 @@ class WalkStateNotifier extends StateNotifier<WalkState> {
       return;
     }
 
-    state = WalkState.success();
+    state = WalkState();
   }
 
 }
 
-sealed class WalkState{
-  WalkState._();
+class WalkState{
+  
+  final bool isLoading;
+  final bool hadError;
 
-  factory WalkState.none() => WalkStateNone();
-  factory WalkState.success() => WalkStateSuccess();
-  factory WalkState.loading() => WalkStateLoading();
-  factory WalkState.error(String error) => WalkStateError(error);
-}
+  final String? error;
+  
+  WalkState({
+    this.hadError = false,
+    this.isLoading = false,
+    this.error
+  });
 
-
-class WalkStateNone extends WalkState{
-  WalkStateNone() : super._();
-}
-
-class WalkStateSuccess extends WalkState{
-  WalkStateSuccess() : super._();
-}
-
-class WalkStateLoading extends WalkState{
-  WalkStateLoading() : super._();
-}
-
-class WalkStateError extends WalkState{
-  final String message;
-  WalkStateError(this.message) : super._();
+  factory WalkState.loading() => WalkState(isLoading: true);
+  factory WalkState.error(String error) => WalkState(hadError: true, error: error);
 }

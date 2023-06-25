@@ -5,16 +5,18 @@ import 'package:nao_controller/presentation/providers/states/leds_dialog_state_n
 import 'package:nao_controller/presentation/widgets/apply_gradient.dart';
 import 'package:nao_controller/utils/utils.dart';
 
+final _currentModeProvider = StateProvider<LedMode>((ref) => LedMode.rasta);
+
 class LedsDialog extends ConsumerWidget {
   
   const LedsDialog({super.key});
 
   void _handleState(BuildContext context, LedsDialogState state){
     if(state.hadError){
-      showErrorSnackBar(context, state.errorMessage!);
+      showErrorSnackBar(context, state.error!);
     }
 
-    if(state.hadError || state.sent){
+    if(state.hadError || state.isSent){
       Navigator.of(context).pop();
     }
   }
@@ -24,6 +26,9 @@ class LedsDialog extends ConsumerWidget {
     
     final size = screenSizeOf(context);
     final backgroundColor = colorSchemeOf(context).primary;
+
+    final currentMode = ref.watch(_currentModeProvider);
+    final modeNotifier = ref.read(_currentModeProvider.notifier);
 
     final state = ref.watch(ledsDialogStateNotifier);
     final notifier = ref.read(ledsDialogStateNotifier.notifier);
@@ -51,9 +56,9 @@ class LedsDialog extends ConsumerWidget {
                     title: const Text('Rasta Animation'),
                     leading: Radio<LedMode>(
                       value: LedMode.rasta,
-                      groupValue: state.currentMode,
+                      groupValue: currentMode,
                       onChanged: (LedMode? value) {
-                        notifier.updateMode(value ?? LedMode.randomEyes);
+                        modeNotifier.state = value ?? LedMode.randomEyes;
                       },
                     ),
                   ),
@@ -61,9 +66,9 @@ class LedsDialog extends ConsumerWidget {
                     title: const Text('Random eyes Animation'),
                     leading: Radio<LedMode>(
                       value: LedMode.randomEyes,
-                      groupValue: state.currentMode,
+                      groupValue: currentMode,
                       onChanged: (LedMode? value) {
-                        notifier.updateMode(value ?? LedMode.randomEyes);
+                        modeNotifier.state = value ?? LedMode.randomEyes;
                       },
                     ),
                   ),
@@ -71,9 +76,9 @@ class LedsDialog extends ConsumerWidget {
                     title: const Text('Off'),
                     leading: Radio<LedMode>(
                       value: LedMode.off,
-                      groupValue: state.currentMode,
+                      groupValue: currentMode,
                       onChanged: (LedMode? value) {
-                        notifier.updateMode(value ?? LedMode.randomEyes);
+                        modeNotifier.state = value ?? LedMode.randomEyes;
                       },
                     ),
                   ),
@@ -81,9 +86,9 @@ class LedsDialog extends ConsumerWidget {
                     title: const Text('On'),
                     leading: Radio<LedMode>(
                       value: LedMode.on,
-                      groupValue: state.currentMode,
+                      groupValue: currentMode,
                       onChanged: (LedMode? value) {
-                        notifier.updateMode(value ?? LedMode.randomEyes);
+                        modeNotifier.state = value ?? LedMode.randomEyes;
                       },
                     ),
                   ),
@@ -91,9 +96,9 @@ class LedsDialog extends ConsumerWidget {
                     title: const Text('Reset'),
                     leading: Radio<LedMode>(
                       value: LedMode.reset,
-                      groupValue: state.currentMode,
+                      groupValue: currentMode,
                       onChanged: (LedMode? value) {
-                        notifier.updateMode(value ?? LedMode.randomEyes);
+                        modeNotifier.state = value ?? LedMode.randomEyes;
                       },
                     ),
                   ),
@@ -108,7 +113,7 @@ class LedsDialog extends ConsumerWidget {
                       backgroundColor
                     ],
                     child: TextButton(
-                      onPressed: () => notifier.sendLedsMode(),
+                      onPressed: () => notifier.sendLedsMode(currentMode),
                       child: const Text(
                         "Invia",
                         style: TextStyle(

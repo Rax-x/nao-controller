@@ -32,10 +32,10 @@ class _TalkDialogState extends ConsumerState<TalkDialog> {
 
   void _handleState(BuildContext context, TalkDialogState state){
     if(state.hadError){
-      showErrorSnackBar(context, state.errorMessage!);
+      showErrorSnackBar(context, state.error!);
     }
 
-    if(state.hadError || state.sent){
+    if(state.hadError || state.isSent){
       Navigator.of(context).pop();
     }
   }

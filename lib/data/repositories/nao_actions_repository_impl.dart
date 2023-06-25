@@ -7,8 +7,6 @@ import 'package:nao_controller/utils/resource.dart';
 
 import 'package:http/http.dart';
 
-// TODO: Improve error messages
-
 class NaoActionsRepositoryImpl implements NaoActionsRepository {
 
   final NaoService _service;
@@ -18,7 +16,7 @@ class NaoActionsRepositoryImpl implements NaoActionsRepository {
 
   NaoActionsRepositoryImpl(this._service);
 
-  Resource _successIfOKOtherwiseError(Response response){
+  Resource _successIfOkOtherwiseError(Response response){
     return response.statusCode != _okStatusCode
       ? Resource.error(_errorMessage, response.statusCode) 
       : Resource.success();
@@ -45,7 +43,7 @@ class NaoActionsRepositoryImpl implements NaoActionsRepository {
     final response = await _service
       .changeLedColor(NaoChangeLedColorEventType.off);
 
-    return _successIfOKOtherwiseError(response);
+    return _successIfOkOtherwiseError(response);
   }
 
   @override
@@ -53,7 +51,7 @@ class NaoActionsRepositoryImpl implements NaoActionsRepository {
     final response = await _service
       .changeLedColor(NaoChangeLedColorEventType.on);
 
-    return _successIfOKOtherwiseError(response);
+    return _successIfOkOtherwiseError(response);
   }
 
   @override
@@ -61,7 +59,7 @@ class NaoActionsRepositoryImpl implements NaoActionsRepository {
     final response = await _service
       .changeLedColor(NaoChangeLedColorEventType.randomEyes);
 
-    return _successIfOKOtherwiseError(response);
+    return _successIfOkOtherwiseError(response);
   }
 
   @override
@@ -69,7 +67,7 @@ class NaoActionsRepositoryImpl implements NaoActionsRepository {
     final response = await _service
       .changeLedColor(NaoChangeLedColorEventType.rasta);
 
-    return _successIfOKOtherwiseError(response);
+    return _successIfOkOtherwiseError(response);
   }
 
   @override
@@ -77,34 +75,34 @@ class NaoActionsRepositoryImpl implements NaoActionsRepository {
     final response = await _service
       .changeLedColor(NaoChangeLedColorEventType.reset);
 
-    return _successIfOKOtherwiseError(response);
+    return _successIfOkOtherwiseError(response);
   }
 
   @override
   Future<Resource> talk(String message) async {
     final response = await _service.speechText(message);
 
-    return _successIfOKOtherwiseError(response);
+    return _successIfOkOtherwiseError(response);
   }
 
   @override
   Future<Resource> walk(Map<String, double> coordinates) async {
     final response = await _service.walk(coordinates);
 
-    return _successIfOKOtherwiseError(response);
+    return _successIfOkOtherwiseError(response);
   }
 
   @override
   Future<Resource> closeServer() async {
     final response = await _service.closeServer();
 
-    return _successIfOKOtherwiseError(response);
+    return _successIfOkOtherwiseError(response);
   }
 
   @override
   Future<Resource> pingServer() async {
     final response = await _service.pingServer();
 
-    return _successIfOKOtherwiseError(response);
+    return _successIfOkOtherwiseError(response);
   }
 }

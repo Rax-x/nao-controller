@@ -16,54 +16,38 @@ class LedsDialogStateNotifier extends StateNotifier<LedsDialogState>{
   
   LedsDialogStateNotifier(this._ledsUseCase) : super(LedsDialogState());
 
-  Future<void> sendLedsMode() async {
+  Future<void> sendLedsMode(LedMode mode) async {
     
-    state = LedsDialogState.loading(state.currentMode);
-    final resource = await _ledsUseCase.call(state.currentMode);
+    state = LedsDialogState.loading();
+    final resource = await _ledsUseCase.call(mode);
 
     if(resource is ResourceSuccess){
-      state = LedsDialogState.success(state.currentMode);
+      state = LedsDialogState.success();
       return;
     }
 
-    state = LedsDialogState.error(
-      state.currentMode,
-      (resource as ResourceError).message
-    );
+    state = LedsDialogState.error((resource as ResourceError).message);
   }
-
-  void updateMode(LedMode mode){
-    state = LedsDialogState(currentMode: mode);
-  }
-
+  
 }
 
 class LedsDialogState{
   
-  bool isLoading;
-  bool hadError;
-  bool sent;
-
-  LedMode currentMode;
-  String? errorMessage;
+  final bool isLoading;
+  final bool hadError;
+  final bool isSent;
+ 
+  final String? error;
   
   LedsDialogState({
-    this.sent = false,
+    this.isSent = false,
     this.isLoading = false,
     this.hadError = false,
-    this.currentMode = LedMode.rasta,
-    this.errorMessage
+    this.error
   });
 
-  factory LedsDialogState.success(LedMode mode) => LedsDialogState(currentMode: mode, sent: true);
-  factory LedsDialogState.loading(LedMode mode) => LedsDialogState(currentMode: mode, isLoading: true);
-
-  factory LedsDialogState.error(LedMode mode, String error) {
-    return LedsDialogState(
-      hadError: true, 
-      errorMessage: error, 
-      currentMode: mode
-    );  
-  }
+  factory LedsDialogState.success() => LedsDialogState(isSent: true);
+  factory LedsDialogState.loading() => LedsDialogState(isLoading: true);
+  factory LedsDialogState.error(String error) => LedsDialogState(hadError: true);  
 
 }

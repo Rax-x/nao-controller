@@ -38,8 +38,8 @@ class _WalkScreenState extends ConsumerState<WalkScreen> {
   }
 
   void _handleErrorState(WalkState state){
-    if(state is WalkStateError){
-      showErrorSnackBar(context, state.message);
+    if(state.hadError){
+      showErrorSnackBar(context, state.error!);
     }
   }
 
@@ -50,8 +50,6 @@ class _WalkScreenState extends ConsumerState<WalkScreen> {
 
     final notifier = ref.read(walkStateNotifierProvider.notifier);
     final state = ref.watch(walkStateNotifierProvider);
-
-    bool isLoading = state is WalkStateLoading;
 
     final backgroundColor = colorSchemeOf(context).primary;
     final width = screenSizeOf(context).width;
@@ -76,13 +74,13 @@ class _WalkScreenState extends ConsumerState<WalkScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             ControllerWidget(
-              disabled: isCustomMovmentsChecked || isLoading,
+              disabled: isCustomMovmentsChecked || state.isLoading,
               onUpPressed: () => notifier.walkTo(1, 0), 
               onDownPressed: () => notifier.walkTo(-1, 0), 
               onLeftPressed: () => notifier.walkTo(0, 1), 
               onRightPressed: () => notifier.walkTo(0, -1)
             ),
-            (!isCustomMovmentsChecked && isLoading) 
+            (!isCustomMovmentsChecked && state.isLoading) 
               ? const CircularProgressIndicator()
               : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -128,7 +126,7 @@ class _WalkScreenState extends ConsumerState<WalkScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 30),
-                  child: (isLoading) 
+                  child: (state.isLoading) 
                     ? const CircularProgressIndicator() 
                     : ApplyGradient(
                         width: width * 0.4,
