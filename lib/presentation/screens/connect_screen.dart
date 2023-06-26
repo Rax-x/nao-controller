@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -31,6 +33,31 @@ class _ConnectScreenState extends ConsumerState<ConnectScreen> {
   void dispose() {
     super.dispose();
     _editingController.dispose();
+  }
+
+  bool _isValidAddress(String address){
+    if(address.isEmpty){
+      return false;
+    }
+
+    final parts = address.split(':');
+
+    if(parts.length == 1) {
+      return false;
+    }
+
+    if(InternetAddress.tryParse(parts[0]) == null){
+      return false;
+    }
+
+    final port = int.tryParse(parts[1]);
+    if(port == null){
+      return false;    
+    }
+
+    if(port < 1 || port > 65535) return false;
+
+    return true;
   }
 
   void _handleState(BuildContext context, ConnectState state){
@@ -91,7 +118,7 @@ class _ConnectScreenState extends ConsumerState<ConnectScreen> {
                 child: SizedBox(
                   width: size.width * 0.8,
                   child: InputField(
-                    label: "Inserici l'IP di Nao", 
+                    label: "Esempio: 127.0.0.1:8080", 
                     editingController: _editingController
                   )
                 )
@@ -119,7 +146,19 @@ class _ConnectScreenState extends ConsumerState<ConnectScreen> {
                         ),
                       ),
                       onPressed: () {
-                        notifier.connect(_editingController.text.trim());
+
+                        final address = _editingController.text.trim();
+
+                        if(!_isValidAddress(address)){
+                          _editingController.text = "";
+                          showErrorSnackBar(
+                            context, 
+                            "Invalid Address!"
+                          );
+                          return;
+                        }
+
+                        notifier.connect("http://$address");
                       },
                     )
                   ) 
