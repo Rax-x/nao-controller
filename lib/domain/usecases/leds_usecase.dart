@@ -27,10 +27,8 @@ class LedsUseCase implements UseCase<Resource, LedMode>{
         break;
     }
 
-    // TODO: refactor this
     return Resource.error(
-      "Unable to use leds!", 
-      -1
+      "Unable to use leds!"
     );
 
   }

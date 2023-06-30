@@ -6,10 +6,9 @@ sealed class Resource {
     return ResourceSuccess(data: data);
   }
 
-  factory Resource.error(String message, int statusCode){
+  factory Resource.error(String message){
     return ResourceError(
-      message: message, 
-      statusCode: statusCode
+      message: message
     );
   }
 }
@@ -26,10 +25,8 @@ class ResourceSuccess extends Resource {
 
 class ResourceError extends Resource {
   final String message;
-  final int statusCode;
 
   ResourceError({
-    required this.message,
-    required this.statusCode
+    required this.message
   }) : super._();
 }
