@@ -54,6 +54,9 @@ class HomeScreen extends ConsumerWidget {
               try{
                 notifier.shutdownServer()
                   .whenComplete((){
+                    
+                    if(!context.mounted) return;
+
                     navigateTo(
                       context, 
                       routes.connect, 
@@ -74,6 +77,8 @@ class HomeScreen extends ConsumerWidget {
               try{
                 notifier.disconnect()
                   .whenComplete((){
+                    if(!context.mounted) return;
+                    
                     navigateTo(
                       context, 
                       routes.connect, 

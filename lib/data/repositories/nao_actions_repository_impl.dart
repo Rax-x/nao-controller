@@ -7,13 +7,9 @@ import 'package:nao_controller/data/models/nao_change_led_color_event_type.dart'
 import 'package:nao_controller/domain/repositories/nao_actions_repository.dart';
 import 'package:nao_controller/utils/resource.dart';
 
-
 class NaoActionsRepositoryImpl implements NaoActionsRepository {
 
   final NaoService _service;
-  final _errorMessage = "An Error occurred! Check your internet connection!";
-
-  final _okStatusCode = 200;
 
   NaoActionsRepositoryImpl(this._service);
 
@@ -28,147 +24,104 @@ class NaoActionsRepositoryImpl implements NaoActionsRepository {
   }
 
   Resource _successIfOkOtherwiseError(Response response){
-    return response.statusCode != _okStatusCode
-      ? Resource.error(_errorMessage) 
+    return response.statusCode != HttpStatus.ok
+      ? Resource.error("An error occurred, try to check your internet connection.") 
       : Resource.success();
   }
 
   @override
   Future<Resource> getBatteryInfo() async {
-
-    Response response;
-
     try{
-      response = await _service.getBatteryInfo();
+      final response = await _service.getBatteryInfo();
+
+      if(response.statusCode != HttpStatus.ok || 
+          response.headers[HttpHeaders.contentLengthHeader] == null){
+        
+        return Resource.error("NAO battery level retrieval failed.");
+      }
+
+      return Resource.success(
+        jsonDecode(response.data as String)
+      );
+
     } on DioException catch (e){
       return _handleError(e);
     }
+  }
 
-    if(response.statusCode != _okStatusCode || 
-        response.headers[HttpHeaders.contentLengthHeader] == null){
-      
-      return Resource.error(
-        _errorMessage);
+  Future<Resource> _sendLedEvent(NaoChangeLedColorEventType event) async {
+
+    try{
+      Response response = await _service.changeLedColor(event);
+      return _successIfOkOtherwiseError(response); 
+    } on DioException catch(e){
+      return _handleError(e);
     }
-
-    return Resource.success(
-      jsonDecode(response.data as String)
-    );
   }
 
   @override
   Future<Resource> ledOff() async {
-    Response response;
-
-    try{
-      response = await _service
-        .changeLedColor(NaoChangeLedColorEventType.off);  
-    } on DioException catch(e){
-      return _handleError(e);
-    }
-    
-    return _successIfOkOtherwiseError(response);
+    return _sendLedEvent(NaoChangeLedColorEventType.off);  
   }
 
   @override
   Future<Resource> ledOn() async {
-    Response response;
-    
-    try{
-      response = await _service
-        .changeLedColor(NaoChangeLedColorEventType.on);
-    } on DioException catch(e){
-      return _handleError(e);
-    }
-    return _successIfOkOtherwiseError(response);
+    return _sendLedEvent(NaoChangeLedColorEventType.on);
   }
 
   @override
   Future<Resource> ledRandomEyes() async {
-    Response response;
-    
-    try{
-      response = await _service
-        .changeLedColor(NaoChangeLedColorEventType.randomEyes);
-    } on DioException catch(e){
-      return _handleError(e);
-    }
-
-    return _successIfOkOtherwiseError(response);
+    return _sendLedEvent(NaoChangeLedColorEventType.randomEyes);
   }
 
   @override
   Future<Resource> ledRasta() async {
-    Response response;
-
-    try{
-      response = await _service
-        .changeLedColor(NaoChangeLedColorEventType.rasta);
-    } on DioException catch(e){
-      return _handleError(e);
-    }
-    return _successIfOkOtherwiseError(response);
+    return _sendLedEvent(NaoChangeLedColorEventType.rasta);
   }
 
   @override
   Future<Resource> ledReset() async {
-    Response response;
-
-    try{
-      response = await _service
-        .changeLedColor(NaoChangeLedColorEventType.reset);
-    } on DioException catch(e){
-      return _handleError(e);
-    }
-    return _successIfOkOtherwiseError(response);
+    return _sendLedEvent(NaoChangeLedColorEventType.reset);
   }
 
   @override
   Future<Resource> talk(String message) async {
-    Response response;
-
+    
     try{
-      response = await _service.speechText(message);
+      final response = await _service.speechText(message);
+      return _successIfOkOtherwiseError(response);
     } on DioException catch(e){
       return _handleError(e);
     }
-    return _successIfOkOtherwiseError(response);
   }
 
   @override
-  Future<Resource> walk(Map<String, double> coordinates) async {
-    Response response;
-
+  Future<Resource> walk(double x, double y) async {
     try{
-      response = await _service.walk(coordinates);
+      final response = await _service.walk(x, y);
+      return _successIfOkOtherwiseError(response);
     } on DioException catch(e){
       return _handleError(e);
     }
-    return _successIfOkOtherwiseError(response);
   }
 
   @override
   Future<Resource> closeServer() async {
-    Response response;
-
     try{
-      response = await _service.closeServer();
+      final response = await _service.closeServer();
+      return _successIfOkOtherwiseError(response);
     } on DioException catch(e){
       return _handleError(e);
     }
-    return _successIfOkOtherwiseError(response);
   }
 
   @override
   Future<Resource> pingServer() async {
-    Response response;
-
     try{ 
-      response = await _service.pingServer();
+      final response = await _service.pingServer();
+      return _successIfOkOtherwiseError(response);
     } on DioException catch(e){
       return _handleError(e);
     }
-
-    return _successIfOkOtherwiseError(response);
   }
 }

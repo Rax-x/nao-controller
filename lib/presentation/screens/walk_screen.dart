@@ -26,7 +26,7 @@ class _WalkScreenState extends ConsumerState<WalkScreen> {
     super.initState();
 
     _xAxisEditingController = TextEditingController(text: "1");
-    _yAxisEditingController = TextEditingController(text: "1");
+    _yAxisEditingController = TextEditingController(text: "0");
   }
 
   @override
@@ -46,7 +46,7 @@ class _WalkScreenState extends ConsumerState<WalkScreen> {
   @override
   Widget build(BuildContext context) {
     
-    bool isCustomMovmentsChecked = ref.watch(_customMomvementsProvider);
+    final bool isCustomMovmentsChecked = ref.watch(_customMomvementsProvider);
 
     final notifier = ref.read(walkStateNotifierProvider.notifier);
     final state = ref.watch(walkStateNotifierProvider);
@@ -109,7 +109,7 @@ class _WalkScreenState extends ConsumerState<WalkScreen> {
                     SizedBox(
                       width: width * 0.25,
                       child: InputField(
-                        label: "X",
+                        label: "Asse X",
                         type: TextInputType.number,
                         editingController: _xAxisEditingController,
                       ),
@@ -117,7 +117,7 @@ class _WalkScreenState extends ConsumerState<WalkScreen> {
                     SizedBox(
                       width: width * 0.25,
                       child: InputField(
-                        label: "Y",
+                        label: "Asse Y",
                         type: TextInputType.number,
                         editingController: _yAxisEditingController,
                       ),
@@ -144,10 +144,11 @@ class _WalkScreenState extends ConsumerState<WalkScreen> {
                             ),
                           ),
                           onPressed: () {
-                            notifier.walkTo(
-                              double.tryParse(_xAxisEditingController.text) ?? 0,
-                              double.tryParse(_yAxisEditingController.text) ?? 0
-                            );
+
+                            final x = double.tryParse(_xAxisEditingController.text) ?? 0;
+                            final y = double.tryParse(_yAxisEditingController.text) ?? 0;
+
+                            notifier.walkTo(x, y);
                           },
                         )
                       )

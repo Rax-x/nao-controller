@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/home/rax/snap/flutter/common/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/home/rax/Android/Sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/home/rax/Scrivania/nao-controller/android/app/.cxx/RelWithDebInfo/5a422c29/x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/home/rax/Android/Sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/home/rax/Scrivania/nao-controller/android/app/.cxx/RelWithDebInfo/5a422c29/x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

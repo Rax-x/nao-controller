@@ -23,13 +23,6 @@ class LedsUseCase implements UseCase<Resource, LedMode>{
         return _repo.ledRasta();
       case LedMode.reset:
         return _repo.ledReset();
-      default:
-        break;
     }
-
-    return Resource.error(
-      "Unable to use leds!"
-    );
-
   }
 }
