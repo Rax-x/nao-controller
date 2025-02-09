@@ -36,10 +36,13 @@ class NaoService {
     });
   } 
 
-  Future<Response> walk(Map<String, double> coordinates) async {  
+  Future<Response> walk(double x, double y) async {  
     return _sendPostRequest({
       'type': NaoEvent.walk.index,
-      'payload': coordinates
+      'payload': {
+        'x': x,
+        'y': y
+      }
     });
   } 
 

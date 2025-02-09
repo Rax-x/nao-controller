@@ -10,10 +10,8 @@ class WalkUseCase implements UseCase<Resource, NaoCoordinatesParams>{
 
   @override
   Future<Resource> call(NaoCoordinatesParams params) async {
-    return _repo.walk({
-      "x": params.x,
-      "y": params.y
-    });
+    final NaoCoordinatesParams(:x, :y) = params;
+    return _repo.walk(x, y);
   }
 }
 
